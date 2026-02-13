@@ -1,0 +1,38 @@
+/* Heredamos tu estructura base */
+body { margin: 0; font-family: 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; }
+
+.banner-oficial {
+    max-width: 900px; margin: 20px auto; padding: 30px; border-radius: 15px;
+    color: white; text-align: center; transition: background 0.5s ease;
+}
+
+/* Colores Dinámicos */
+body.toto3 .banner-oficial { background: linear-gradient(135deg, #1d3557 0%, #457b9d 100%); }
+body.loto4 .banner-oficial { background: linear-gradient(135deg, #e63946 0%, #8d0801 100%); }
+
+.badge { background: #ffd400; color: #1d3557; padding: 5px 15px; border-radius: 20px; font-weight: bold; }
+
+.banner-monto .monto { font-size: 5rem; font-weight: 800; display: block; }
+
+.buscador { display: flex; justify-content: center; gap: 10px; margin-bottom: 20px; }
+select { padding: 10px; border-radius: 8px; border: 1px solid #ccc; width: 150px; }
+
+.card {
+    background: white; max-width: 600px; margin: 0 auto; padding: 25px;
+    border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.bolas { display: flex; gap: 12px; justify-content: center; margin-top: 15px; }
+
+/* Bola con estilo tómbola */
+.bola {
+    width: 55px; height: 55px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.4rem; font-weight: bold;
+    background: white; color: #1d3557; border: 3px solid #1d3557;
+    box-shadow: inset -3px -3px 10px rgba(0,0,0,0.1);
+}
+
+body.loto4 .bola { color: #e63946; border-color: #e63946; }
+
+h3 { text-align: center; color: #555; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-top: 20px; }
