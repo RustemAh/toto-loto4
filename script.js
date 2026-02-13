@@ -1,8 +1,9 @@
-const SHEET_ID = "TU_ID_DE_GOOGLE_SHEETS";
+const SHEET_ID = "ID_DE_TU_PLANILLA_LOTO4";
 const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
 const contenedor = document.getElementById("resultados");
 const selectSorteo = document.getElementById("selectSorteo");
+const bannerMonto = document.getElementById("bannerMonto");
 let ALL_DATA = [];
 
 fetch(URL)
@@ -17,11 +18,8 @@ fetch(URL)
         return {
             sorteo: get("sorteo").toString(),
             fecha: get("fecha"),
-            juegos: [
-                { nombre: "Sorteo Día", nums: parseNums(get("dia")) },
-                { nombre: "Sorteo Tarde", nums: parseNums(get("tarde")) },
-                { nombre: "Sorteo Noche", nums: parseNums(get("noche")) }
-            ].filter(j => j.nums.length > 0)
+            monto: Number(get("monto")) || 0,
+            nums: get("resultado").toString().match(/\d+/g) || []
         };
     }).sort((a, b) => Number(b.sorteo) - Number(a.sorteo));
 
@@ -32,34 +30,26 @@ fetch(URL)
     }
   });
 
-function parseNums(v) { 
-    if(!v) return [];
-    // Acepta números seguidos (812) o separados (8-1-2)
-    return v.toString().replace(/-/g, "").split(""); 
-}
-
 function aplicarFiltros() {
     const s = ALL_DATA.find(x => x.sorteo === selectSorteo.value);
     if (!s) return;
     
+    // Formateo de monto en millones para el banner
+    const millones = s.monto >= 1000000 ? Math.floor(s.monto / 1000000) : s.monto;
+    bannerMonto.innerText = `$${millones.toLocaleString("es-CL")}`;
+    
     let html = `
-        <div class="card toto3-card">
+        <div class="card loto4-card">
             <div class="card-header">
-                <h2>Sorteo N° ${s.sorteo}</h2>
+                <h2>Loto 4 - Sorteo ${s.sorteo}</h2>
                 <span class="fecha-label">${s.fecha}</span>
-            </div>`;
+            </div>
+            <div class="bolas-container">
+                ${s.nums.map(n => `<div class="bola polla">${n}</div>`).join("")}
+            </div>
+        </div>`;
     
-    s.juegos.forEach(j => {
-        html += `
-            <div class="sorteo-bloque">
-                <h3>${j.nombre}</h3>
-                <div class="bolas">
-                    ${j.nums.map(n => `<div class="bola">${n}</div>`).join("")}
-                </div>
-            </div>`;
-    });
-    
-    contenedor.innerHTML = html + `</div>`;
+    contenedor.innerHTML = html;
 }
 
 function cargarSelectores(data) {
