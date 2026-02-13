@@ -20,7 +20,7 @@
     .sorteo-bloque h3 { color: #555; font-size: 15px; text-transform: uppercase; margin: 0 0 15px 0; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .bolas { display: flex; justify-content: center; gap: 12px; }
     .bola { width: 55px; height: 55px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #0056b3, #003b8e); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2); border: 2px solid #00265d; }
-    .no-disponible { font-size: 13px; color: #a0aec0; font-style: italic; background: #f8f9fa; padding: 10px; border-radius: 8px; display: block; }
+    .no-disponible { font-size: 13px; color: #a0aec0; font-style: italic; background: #f8f9fa; padding: 10px; border-radius: 8px; display: block; margin-top: 10px; }
     .footer-legal { padding: 30px 20px; text-align: center; font-size: 11px; color: #7f8c8d; max-width: 600px; margin: 0 auto; }
     .brand-footer { margin-top: 15px; font-weight: bold; color: #2c3e50; letter-spacing: 1px; }
   </style>
@@ -32,7 +32,7 @@
       <img src="https://www.epicentrochile.com/wp-content/uploads/2026/02/Logo-LOTO3.png" alt="Logo Toto 3">
       <h1 class="banner-titular"></h1>
     </div>
-    <p>Resultados sorteo</p>
+    <p>Resultados oficiales</p>
   </section>
 
   <section class="buscador">
@@ -43,7 +43,7 @@
 
   <footer class="footer-legal">
     <p><strong>ADVERTENCIA:</strong> Los resultados oficiales pertenecen a Polla Chilena de Beneficencia S.A. Verifique siempre su boleto en agencias oficiales.</p>
-    <div class="brand-footer">Desarrollado por EPICENTRO LABS | Viña del Mar</div>
+    <div class="brand-footer">DESARROLLADO POR EPICENTRO LABS | Viña del Mar</div>
   </footer>
 
   <script>
@@ -54,11 +54,21 @@
     let ALL_DATA = [];
 
     function limpiarFechaGoogle(f) {
-      if (f.toString().includes("Date")) {
-        const c = f.match(/\d+/g);
-        return c ? `${c[2].padStart(2,'0')}-${(parseInt(c[1])+1).toString().padStart(2,'0')}-${c[0]}` : f;
+      if (!f) return "";
+      const s = f.toString();
+      if (s.includes("Date")) {
+        const c = s.match(/\d+/g);
+        return c ? `${c[2].padStart(2,'0')}-${(parseInt(c[1])+1).toString().padStart(2,'0')}-${c[0]}` : s;
       }
-      return f;
+      return s;
+    }
+
+    // Nueva función robusta para procesar números
+    function procesarNumeros(val) {
+      if (!val) return [];
+      // Elimina espacios, guiones o comas y convierte a string
+      const str = val.toString().replace(/[\s\-\,]/g, "");
+      return str.length > 0 ? str.split("") : [];
     }
 
     fetch(URL).then(r => r.text()).then(text => {
@@ -70,16 +80,20 @@
       json.table.cols.forEach((c, i) => { if(c.label) colMap[c.label.toLowerCase().trim()] = i; });
 
       ALL_DATA = json.table.rows.map(row => {
-        const get = col => row.c && row.c[colMap[col]] ? row.c[colMap[col]].v : "";
+        const get = col => {
+          const idx = colMap[col];
+          return (row.c && row.c[idx] && row.c[idx].v !== null) ? row.c[idx].v : "";
+        };
+        
         return {
           fecha: limpiarFechaGoogle(get("fecha")),
           sorteos: [
-            { nombre: "Sorteo Día", emoji: "☀️", n: get("n_dia"), nums: get("numeros_d") ? get("numeros_d").toString().split("") : [] },
-            { nombre: "Sorteo Tarde", emoji: "🌇", n: get("n_tarde"), nums: get("numeros_t") ? get("numeros_t").toString().split("") : [] },
-            { nombre: "Sorteo Noche", emoji: "🌙", n: get("n_noche"), nums: get("numeros_n") ? get("numeros_n").toString().split("") : [] }
-          ].filter(j => j.n !== "") // Solo mostramos bloques que tengan número de sorteo
+            { nombre: "Sorteo Día", emoji: "☀️", n: get("n_dia"), nums: procesarNumeros(get("numeros_d")) },
+            { nombre: "Sorteo Tarde", emoji: "🌇", n: get("n_tarde"), nums: procesarNumeros(get("numeros_t")) },
+            { nombre: "Sorteo Noche", emoji: "🌙", n: get("n_noche"), nums: procesarNumeros(get("numeros_n")) }
+          ].filter(j => j.n !== "") // Solo muestra si existe N° de sorteo
         };
-      }).filter(i => i.fecha).reverse();
+      }).filter(i => i.fecha !== "").reverse();
 
       selectFecha.innerHTML = ALL_DATA.map(x => `<option value="${x.fecha}">${x.fecha}</option>`).join("");
       if(ALL_DATA.length) render();
