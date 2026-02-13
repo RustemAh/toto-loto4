@@ -2,25 +2,22 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Resultados Azar Chile - Epicentro</title>
+  <title>Resultados Toto 3 - Epicentro Chile</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link rel="stylesheet" href="style.css" />
 </head>
-<body id="bodyJuego">
+<body class="toto3-page">
 
-  <section class="banner-oficial" id="bannerColor">
+  <section class="banner-oficial toto3-banner">
     <div class="banner-top">
-      <span class="badge" id="badgeJuego">Juego</span>
-      <span id="bannerTexto">Seleccionando sorteo...</span>
+      <span class="badge">Lotería</span>
+      <span id="bannerTexto">Resultados Diarios</span>
     </div>
-
-    <div class="banner-monto">
-      <span class="monto" id="bannerMonto">$0</span>
-      <span class="millones" id="unidadMonto">Mil</span>
+    <div class="banner-titular">
+      <span class="monto">Toto 3</span>
     </div>
-
     <p class="banner-descripcion">
-      Resultados obtenidos de fuentes oficiales para la Región de Valparaíso.
+      Consulta los números ganadores de los tres sorteos del día.
     </p>
   </section>
 
@@ -28,24 +25,13 @@
     <select id="selectSorteo">
       <option value="">Selecciona sorteo</option>
     </select>
-    <select id="selectFecha">
-      <option value="">Selecciona fecha</option>
-    </select>
-    <button id="btnEmbed" type="button" disabled>Mostrar embed</button>
-  </section>
-
-  <section class="embed" id="embedBox" hidden>
-    <p class="embed-title"><strong>Código embed (iframe):</strong></p>
-    <textarea id="embedCode" readonly></textarea>
-    <div class="embed-actions">
-      <button id="copyEmbed" type="button">Copiar</button>
-    </div>
+    <button id="btnEmbed" type="button">Mostrar embed</button>
   </section>
 
   <main id="resultados"></main>
 
   <footer>
-    <p>DIARIO EL EPICENTRO - Información al instante.</p>
+    <p>DIARIO EL EPICENTRO - Viña del Mar, Chile.</p>
   </footer>
 
   <script src="script.js"></script>
