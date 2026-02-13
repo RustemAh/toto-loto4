@@ -10,7 +10,7 @@
     .badge { background: #ffd400; color: #003b8e; padding: 5px 12px; border-radius: 15px; font-weight: bold; font-size: 12px; text-transform: uppercase; }
     .banner-titular { font-size: 3.5rem; font-weight: 900; margin: 10px 0; }
     .buscador { display: flex; justify-content: center; padding: 20px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    select { padding: 12px; border-radius: 8px; border: 1px solid #ddd; width: 250px; font-size: 16px; cursor: pointer; }
+    select { padding: 12px; border-radius: 8px; border: 1px solid #ddd; width: 250px; font-size: 16px; cursor: pointer; text-align: center; }
     .card { background: white; max-width: 500px; margin: 20px auto; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
     .sorteo-bloque { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px dashed #eee; text-align: center; }
     .sorteo-bloque:last-child { border: none; }
@@ -29,7 +29,7 @@
   </section>
 
   <section class="buscador">
-    <select id="selectSorteo"><option value="">Cargando sorteos...</option></select>
+    <select id="selectFecha"><option value="">Cargando fechas...</option></select>
   </section>
 
   <main id="resultados"></main>
@@ -40,10 +40,11 @@
   </footer>
 
   <script>
-    const SHEET_ID = "1WGtZG2WWqJjGcJxIzR4-7Hl-090HZB7oxBWocX7A2w0"; // Usando tu ID de la captura
+    // Usamos tu SHEET_ID proporcionado
+    const SHEET_ID = "1WGtZG2WWqJjGcJxIzR4-7Hl-090HZB7oxBWocX7A2w0"; 
     const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
     const contenedor = document.getElementById("resultados");
-    const selectSorteo = document.getElementById("selectSorteo");
+    const selectFecha = document.getElementById("selectFecha");
     let ALL_DATA = [];
 
     fetch(URL).then(r => r.text()).then(text => {
@@ -62,27 +63,45 @@
             { nombre: "Sorteo Noche", nums: get("noche") ? get("noche").toString().split("") : [] }
           ].filter(j => j.nums.length > 0)
         };
-      }).filter(item => item.sorteo).sort((a, b) => Number(b.sorteo) - Number(a.sorteo));
+      }).filter(item => item.fecha).sort((a, b) => Number(b.sorteo) - Number(a.sorteo));
 
       cargarSelectores();
-      if(ALL_DATA.length) { selectSorteo.value = ALL_DATA[0].sorteo; render(); }
+      if(ALL_DATA.length) { 
+        // Seleccionamos la fecha más reciente por defecto
+        selectFecha.value = ALL_DATA[0].fecha; 
+        render(); 
+      }
     });
 
     function cargarSelectores() {
-      selectSorteo.innerHTML = ALL_DATA.map(x => `<option value="${x.sorteo}">Sorteo ${x.sorteo} - ${x.fecha}</option>`).join("");
+      // Ahora el value y el texto del select es la fecha
+      selectFecha.innerHTML = ALL_DATA.map(x => `<option value="${x.fecha}">${x.fecha}</option>`).join("");
     }
 
     function render() {
-      const s = ALL_DATA.find(x => x.sorteo === selectSorteo.value);
+      // Filtramos por fecha
+      const s = ALL_DATA.find(x => x.fecha === selectFecha.value);
       if(!s) return;
-      let html = `<div class="card">`;
+      
+      let html = `
+        <div class="card">
+          <div style="text-align:center; margin-bottom:20px; color:#003b8e; font-weight:bold;">
+            Sorteo N° ${s.sorteo}
+          </div>`;
+      
       s.juegos.forEach(j => {
-        html += `<div class="sorteo-bloque"><h3>${j.nombre}</h3><div class="bolas">${j.nums.map(n => `<div class="bola">${n}</div>`).join("")}</div></div>`;
+        html += `
+          <div class="sorteo-bloque">
+            <h3>${j.nombre}</h3>
+            <div class="bolas">
+              ${j.nums.map(n => `<div class="bola">${n}</div>`).join("")}
+            </div>
+          </div>`;
       });
       contenedor.innerHTML = html + `</div>`;
     }
 
-    selectSorteo.addEventListener("change", render);
+    selectFecha.addEventListener("change", render);
   </script>
 </body>
 </html>
