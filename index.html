@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados Azar - Epicentro Chile</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-polla: #e63946;
+            --color-loteria: #1d3557;
+            --bg-card: #f8f9fa;
+        }
+        body { font-family: 'Roboto', sans-serif; margin: 0; padding: 10px; background: transparent; }
+        .card { 
+            background: white; border-radius: 12px; padding: 20px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 5px solid var(--color-loteria);
+            max-width: 400px; margin: auto;
+        }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .header h2 { margin: 0; font-size: 1.2rem; color: #333; }
+        .fecha { font-size: 0.85rem; color: #666; }
+        
+        .numeros-container { display: flex; gap: 10px; justify-content: center; margin: 20px 0; }
+        .bola { 
+            width: 50px; height: 50px; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 1.2rem; color: white;
+            background: radial-gradient(circle at 30% 30%, #457b9d, #1d3557);
+            box-shadow: 2px 4px 8px rgba(0,0,0,0.2);
+        }
+        .bola.polla { background: radial-gradient(circle at 30% 30%, #f0717b, #e63946); }
+        
+        .sub-premios { font-size: 0.9rem; border-top: 1px solid #eee; padding-top: 10px; color: #444; }
+        .footer-logo { text-align: center; margin-top: 15px; font-weight: bold; color: #999; font-size: 0.7rem; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+<div class="card" id="card-juego">
+    <div class="header">
+        <h2 id="nombre-juego">Cargando...</h2>
+        <span class="fecha" id="fecha-sorteo">13 Feb 2026</span>
+    </div>
+    
+    <div class="numeros-container" id="contenedor-bolas">
+        </div>
+
+    <div class="sub-premios" id="info-extra">
+        Sorteo N°: <strong id="n-sorteo">---</strong>
+    </div>
+    
+    <div class="footer-logo">DIARIO EL EPICENTRO</div>
+</div>
+
+<script>
+    // Simulación de datos (Esto lo podrías conectar a una API después)
+    const data = {
+        "toto3": { nombre: "TOTO 3", color: "loteria", nums: [4, 8, 1], sorteo: "3145", fecha: "Hoy" },
+        "loto4": { nombre: "LOTO 4", color: "polla", nums: [12, 24, 5, 31], sorteo: "1289", fecha: "Hoy" }
+    };
+
+    const params = new URLSearchParams(window.location.search);
+    const juegoParam = params.get('juego') || 'toto3';
+    const config = data[juegoParam];
+
+    document.getElementById('nombre-juego').innerText = config.nombre;
+    document.getElementById('n-sorteo').innerText = config.sorteo;
+    document.getElementById('card-juego').style.borderTopColor = `var(--color-${config.color})`;
+
+    const container = document.getElementById('contenedor-bolas');
+    config.nums.forEach(n => {
+        const div = document.createElement('div');
+        div.className = `bola ${config.color}`;
+        div.innerText = n;
+        container.appendChild(div);
+    });
+</script>
+
+</body>
+</html>
