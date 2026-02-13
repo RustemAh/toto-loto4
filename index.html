@@ -2,31 +2,37 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Resultados Toto 3 - Epicentro Chile</title>
+  <title>Resultados Loto 3 - Epicentro Chile</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body { background: #f4f7f6; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; }
-    .banner-oficial { background: linear-gradient(135deg, #003b8e 0%, #0056b3 100%); color: white; padding: 30px 20px; text-align: center; border-bottom: 5px solid #00265d; }
-    .badge { background: #ffd400; color: #003b8e; padding: 5px 12px; border-radius: 15px; font-weight: bold; font-size: 12px; text-transform: uppercase; }
-    .banner-titular { font-size: 3.5rem; font-weight: 900; margin: 10px 0; }
+    .banner-oficial { background: linear-gradient(135deg, #003b8e 0%, #0056b3 100%); color: white; padding: 25px 20px; text-align: center; border-bottom: 5px solid #00265d; }
+    .badge { background: #ffd400; color: #003b8e; padding: 5px 12px; border-radius: 15px; font-weight: bold; font-size: 11px; text-transform: uppercase; margin-bottom: 10px; display: inline-block; }
+    .header-logo-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 10px 0; }
+    .header-logo-container img { height: 60px; width: auto; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2)); }
+    .banner-titular { font-size: 2.8rem; font-weight: 900; margin: 0; }
     .buscador { display: flex; justify-content: center; padding: 20px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    select { padding: 12px; border-radius: 8px; border: 1px solid #ddd; width: 250px; font-size: 16px; cursor: pointer; text-align: center; font-weight: 600; color: #333; }
+    select { padding: 12px; border-radius: 8px; border: 1px solid #ddd; width: 260px; font-size: 16px; cursor: pointer; text-align: center; font-weight: 600; color: #333; }
     .card { background: white; max-width: 500px; margin: 20px auto; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-    .sorteo-info { text-align: center; color: #8d99ae; font-size: 13px; margin-bottom: 20px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
     .sorteo-bloque { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px dashed #eee; text-align: center; }
     .sorteo-bloque:last-child { border: none; }
-    .sorteo-bloque h3 { color: #666; font-size: 14px; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 0.5px; }
+    .n-sorteo-small { color: #003b8e; font-size: 11px; font-weight: bold; display: block; margin-bottom: 5px; opacity: 0.8; }
+    .sorteo-bloque h3 { color: #555; font-size: 15px; text-transform: uppercase; margin: 0 0 15px 0; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .bolas { display: flex; justify-content: center; gap: 12px; }
     .bola { width: 55px; height: 55px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #0056b3, #003b8e); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2); border: 2px solid #00265d; }
+    .no-disponible { font-size: 13px; color: #a0aec0; font-style: italic; background: #f8f9fa; padding: 10px; border-radius: 8px; display: block; }
     .footer-legal { padding: 30px 20px; text-align: center; font-size: 11px; color: #7f8c8d; max-width: 600px; margin: 0 auto; }
     .brand-footer { margin-top: 15px; font-weight: bold; color: #2c3e50; letter-spacing: 1px; }
   </style>
 </head>
 <body>
   <section class="banner-oficial">
-    <div class="banner-top"><span class="badge">Polla Chilena</span></div>
-    <div class="banner-titular">Toto 3</div>
-    <p>Resultados oficiales de los tres sorteos del día</p>
+    <span class="badge">Polla Chilena</span>
+    <div class="header-logo-container">
+      <img src="https://www.epicentrochile.com/wp-content/uploads/2026/02/Logo-LOTO3.png" alt="Logo Toto 3">
+      <h1 class="banner-titular"></h1>
+    </div>
+    <p>Resultados sorteo</p>
   </section>
 
   <section class="buscador">
@@ -36,73 +42,63 @@
   <main id="resultados"></main>
 
   <footer class="footer-legal">
-    <p><strong>ADVERTENCIA:</strong> Este sitio es informativo. Los únicos resultados oficiales son los protocolizados por Polla Chilena de Beneficencia S.A. Verifique su cartón en agencias autorizadas.</p>
-    <div class="brand-footer">DIARIO EL EPICENTRO | Viña del Mar</div>
+    <p><strong>ADVERTENCIA:</strong> Los resultados oficiales pertenecen a Polla Chilena de Beneficencia S.A. Verifique siempre su boleto en agencias oficiales.</p>
+    <div class="brand-footer">Desarrollado por EPICENTRO LABS | Viña del Mar</div>
   </footer>
 
   <script>
-    // Tu nueva ID de planilla
     const SHEET_ID = "1dRIR53JdyxVz0d3nGsSEEfsIVs_E6rvVKt8kVmQ_E7c"; 
     const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
     const contenedor = document.getElementById("resultados");
     const selectFecha = document.getElementById("selectFecha");
     let ALL_DATA = [];
 
+    function limpiarFechaGoogle(f) {
+      if (f.toString().includes("Date")) {
+        const c = f.match(/\d+/g);
+        return c ? `${c[2].padStart(2,'0')}-${(parseInt(c[1])+1).toString().padStart(2,'0')}-${c[0]}` : f;
+      }
+      return f;
+    }
+
     fetch(URL).then(r => r.text()).then(text => {
-      // Limpiar el JSON de Google
       const match = text.match(/setResponse\(([\s\S]*?)\);?\s*$/);
       if (!match) return;
       const json = JSON.parse(match[1]);
       
       const colMap = {};
-      json.table.cols.forEach((c, i) => { 
-        if(c.label) colMap[c.label.toLowerCase().trim()] = i; 
-      });
+      json.table.cols.forEach((c, i) => { if(c.label) colMap[c.label.toLowerCase().trim()] = i; });
 
       ALL_DATA = json.table.rows.map(row => {
-        const get = col => {
-          const index = colMap[col];
-          return row.c && row.c[index] ? row.c[index].v : "";
-        };
-        
+        const get = col => row.c && row.c[colMap[col]] ? row.c[colMap[col]].v : "";
         return {
-          sorteo: get("sorteo").toString(),
-          fecha: get("fecha").toString(),
-          juegos: [
-            { nombre: "Sorteo Día", nums: get("dia") ? get("dia").toString().split("") : [] },
-            { nombre: "Sorteo Tarde", nums: get("tarde") ? get("tarde").toString().split("") : [] },
-            { nombre: "Sorteo Noche", nums: get("noche") ? get("noche").toString().split("") : [] }
-          ].filter(j => j.nums.length > 0)
+          fecha: limpiarFechaGoogle(get("fecha")),
+          sorteos: [
+            { nombre: "Sorteo Día", emoji: "☀️", n: get("n_dia"), nums: get("numeros_d") ? get("numeros_d").toString().split("") : [] },
+            { nombre: "Sorteo Tarde", emoji: "🌇", n: get("n_tarde"), nums: get("numeros_t") ? get("numeros_t").toString().split("") : [] },
+            { nombre: "Sorteo Noche", emoji: "🌙", n: get("n_noche"), nums: get("numeros_n") ? get("numeros_n").toString().split("") : [] }
+          ].filter(j => j.n !== "") // Solo mostramos bloques que tengan número de sorteo
         };
-      }).filter(item => item.fecha).sort((a, b) => Number(b.sorteo) - Number(a.sorteo));
+      }).filter(i => i.fecha).reverse();
 
-      cargarSelectores();
-      if(ALL_DATA.length) { 
-        selectFecha.value = ALL_DATA[0].fecha; 
-        render(); 
-      }
-    });
-
-    function cargarSelectores() {
-      // Poblamos el select solo con las fechas
       selectFecha.innerHTML = ALL_DATA.map(x => `<option value="${x.fecha}">${x.fecha}</option>`).join("");
-    }
+      if(ALL_DATA.length) render();
+    });
 
     function render() {
       const s = ALL_DATA.find(x => x.fecha === selectFecha.value);
       if(!s) return;
-      
-      let html = `
-        <div class="card">
-          <div class="sorteo-info">Sorteo N° ${s.sorteo}</div>`;
-      
-      s.juegos.forEach(j => {
+      let html = `<div class="card">`;
+      s.sorteos.forEach(j => {
+        const tieneResultados = j.nums.length > 0;
         html += `
           <div class="sorteo-bloque">
-            <h3>${j.nombre}</h3>
-            <div class="bolas">
-              ${j.nums.map(n => `<div class="bola">${n}</div>`).join("")}
-            </div>
+            <span class="n-sorteo-small">N° ${j.n}</span>
+            <h3><span>${j.emoji}</span> ${j.nombre}</h3>
+            ${tieneResultados 
+              ? `<div class="bolas">${j.nums.map(n => `<div class="bola">${n}</div>`).join("")}</div>`
+              : `<span class="no-disponible">Resultado no disponible</span>`
+            }
           </div>`;
       });
       contenedor.innerHTML = html + `</div>`;
