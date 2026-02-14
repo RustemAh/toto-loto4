@@ -11,8 +11,14 @@
     .header-logo-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 10px 0; }
     .header-logo-container img { height: 60px; width: auto; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2)); }
     .banner-titular { font-size: 2.8rem; font-weight: 900; margin: 0; }
-    .buscador { display: flex; justify-content: center; padding: 20px; background: white; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-    select { padding: 12px; border-radius: 8px; border: 1px solid #ddd; width: 260px; font-size: 16px; cursor: pointer; text-align: center; font-weight: 600; color: #333; }
+    
+    .buscador-container { display: flex; flex-direction: column; align-items: center; background: white; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); gap: 10px; }
+    .controles { display: flex; gap: 10px; align-items: center; }
+    select { padding: 12px; border-radius: 8px; border: 1px solid #ddd; width: 220px; font-size: 16px; font-weight: 600; color: #333; }
+    
+    #btnEmbed { background: #003b8e; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: background 0.3s; }
+    #btnEmbed:hover { background: #0056b3; }
+
     .card { background: white; max-width: 500px; margin: 20px auto; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
     .sorteo-bloque { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px dashed #eee; text-align: center; }
     .sorteo-bloque:last-child { border: none; }
@@ -21,22 +27,33 @@
     .bolas { display: flex; justify-content: center; gap: 12px; }
     .bola { width: 55px; height: 55px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #0056b3, #003b8e); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2); border: 2px solid #00265d; }
     .no-disponible { font-size: 13px; color: #a0aec0; font-style: italic; background: #f8f9fa; padding: 10px; border-radius: 8px; display: block; margin-top: 10px; }
+    
     .footer-legal { padding: 30px 20px; text-align: center; font-size: 11px; color: #7f8c8d; max-width: 600px; margin: 0 auto; }
     .brand-footer { margin-top: 15px; font-weight: bold; color: #2c3e50; letter-spacing: 1px; }
+
+    /* Ocultar elementos si es modo embed */
+    body.is-embed .banner-oficial, 
+    body.is-embed .buscador-container, 
+    body.is-embed .footer-legal { display: none; }
+    body.is-embed .card { margin-top: 10px; box-shadow: none; border: 1px solid #eee; }
   </style>
 </head>
 <body>
+
   <section class="banner-oficial">
     <span class="badge">Polla Chilena</span>
     <div class="header-logo-container">
       <img src="https://www.epicentrochile.com/wp-content/uploads/2026/02/Logo-LOTO3.png" alt="Logo Toto 3">
       <h1 class="banner-titular"></h1>
     </div>
-    <p>Resultados oficiales</p>
+    <p>Resultados </p>
   </section>
 
-  <section class="buscador">
-    <select id="selectFecha"><option value="">Cargando fechas...</option></select>
+  <section class="buscador-container">
+    <div class="controles">
+      <select id="selectFecha"><option value="">Cargando...</option></select>
+      <button id="btnEmbed">Copiar Embed</button>
+    </div>
   </section>
 
   <main id="resultados"></main>
@@ -51,7 +68,13 @@
     const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
     const contenedor = document.getElementById("resultados");
     const selectFecha = document.getElementById("selectFecha");
+    const btnEmbed = document.getElementById("btnEmbed");
     let ALL_DATA = [];
+
+    // 1. Detectar si la URL trae el parámetro fecha o embed
+    const params = new URLSearchParams(window.location.search);
+    const fechaUrl = params.get('fecha');
+    if (params.get('embed') === '1') document.body.classList.add('is-embed');
 
     function limpiarFechaGoogle(f) {
       if (!f) return "";
@@ -63,10 +86,8 @@
       return s;
     }
 
-    // Nueva función robusta para procesar números
     function procesarNumeros(val) {
       if (!val) return [];
-      // Elimina espacios, guiones o comas y convierte a string
       const str = val.toString().replace(/[\s\-\,]/g, "");
       return str.length > 0 ? str.split("") : [];
     }
@@ -75,7 +96,6 @@
       const match = text.match(/setResponse\(([\s\S]*?)\);?\s*$/);
       if (!match) return;
       const json = JSON.parse(match[1]);
-      
       const colMap = {};
       json.table.cols.forEach((c, i) => { if(c.label) colMap[c.label.toLowerCase().trim()] = i; });
 
@@ -84,19 +104,26 @@
           const idx = colMap[col];
           return (row.c && row.c[idx] && row.c[idx].v !== null) ? row.c[idx].v : "";
         };
-        
         return {
           fecha: limpiarFechaGoogle(get("fecha")),
           sorteos: [
             { nombre: "Sorteo Día", emoji: "☀️", n: get("n_dia"), nums: procesarNumeros(get("numeros_d")) },
             { nombre: "Sorteo Tarde", emoji: "🌇", n: get("n_tarde"), nums: procesarNumeros(get("numeros_t")) },
             { nombre: "Sorteo Noche", emoji: "🌙", n: get("n_noche"), nums: procesarNumeros(get("numeros_n")) }
-          ].filter(j => j.n !== "") // Solo muestra si existe N° de sorteo
+          ].filter(j => j.n !== "")
         };
       }).filter(i => i.fecha !== "").reverse();
 
       selectFecha.innerHTML = ALL_DATA.map(x => `<option value="${x.fecha}">${x.fecha}</option>`).join("");
-      if(ALL_DATA.length) render();
+      
+      // Si la URL pide una fecha específica, cargar esa, si no, la más reciente
+      if (fechaUrl && ALL_DATA.some(d => d.fecha === fechaUrl)) {
+        selectFecha.value = fechaUrl;
+      } else if(ALL_DATA.length) {
+        selectFecha.value = ALL_DATA[0].fecha;
+      }
+      
+      render();
     });
 
     function render() {
@@ -117,6 +144,18 @@
       });
       contenedor.innerHTML = html + `</div>`;
     }
+
+    // Lógica del botón Embed
+    btnEmbed.addEventListener("click", () => {
+      const base = window.location.href.split('?')[0];
+      const fechaActual = selectFecha.value;
+      const code = `<iframe src="${base}?fecha=${fechaActual}&embed=1" width="100%" height="800" style="border:0;border-radius:12px;overflow:hidden" loading="lazy"></iframe>`;
+      
+      // Copiar al portapapeles
+      navigator.clipboard.writeText(code).then(() => {
+        alert("Código de Embed copiado al portapapeles para la fecha: " + fechaActual);
+      });
+    });
 
     selectFecha.addEventListener("change", render);
   </script>
