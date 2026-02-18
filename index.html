@@ -89,10 +89,21 @@
     }
 
     function procesarNumeros(val) {
-      if (!val) return [];
-      const str = val.toString().replace(/[\s\-\,]/g, "");
-      return str.length > 0 ? str.split("") : [];
-    }
+  // 1. Validar si la celda está vacía (evita el mensaje de error falso)
+  if (val === undefined || val === null || val.toString().trim() === "") {
+    return [];
+  }
+  
+  // 2. Limpiar caracteres y convertir a texto
+  let str = val.toString().replace(/[\s\-\,]/g, "");
+  
+  // 3. Rellenar con ceros si faltan dígitos (arregla el 076)
+  if (str.length > 0 && str.length < 3) {
+    str = str.padStart(3, '0');
+  }
+  
+  return str.split("");
+}
 
     fetch(URL).then(r => r.text()).then(text => {
       const match = text.match(/setResponse\(([\s\S]*?)\);?\s*$/);
