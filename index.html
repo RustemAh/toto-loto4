@@ -2,21 +2,21 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Resultados Toto 3 - Epicentro Chile</title>
+  <title>Resultados Loto 3 - Epicentro Chile</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body { background: #f4f7f6; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; }
     
-    /* Banner siempre visible */
+    /* Banner Oficial Superior */
     .banner-oficial { background: linear-gradient(135deg, #003b8e 0%, #0056b3 100%); color: white; padding: 25px 20px; text-align: center; border-bottom: 5px solid #00265d; }
     .badge { background: #ffd400; color: #003b8e; padding: 5px 12px; border-radius: 15px; font-weight: bold; font-size: 11px; text-transform: uppercase; margin-bottom: 10px; display: inline-block; }
     .header-logo-container { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 10px 0; }
     .header-logo-container img { height: 60px; width: auto; filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.2)); }
     .banner-titular { font-size: 2.8rem; font-weight: 900; margin: 0; }
     
-    /* Buscador y Controles (Ocultos solo en embed para no ensuciar la nota) */
+    /* Buscador y Controles */
     .buscador-container { display: flex; flex-direction: column; align-items: center; background: white; padding: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); gap: 10px; }
-    .controles { display: flex; gap: 10px; align-items: center; }
+    .controles { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; }
     select { padding: 12px; border-radius: 8px; border: 1px solid #ddd; width: 220px; font-size: 16px; font-weight: 600; color: #333; }
     
     #btnEmbed { background: #003b8e; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; transition: background 0.3s; }
@@ -25,18 +25,42 @@
     /* Resultados */
     .card { background: white; max-width: 500px; margin: 20px auto; padding: 25px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
     .sorteo-bloque { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px dashed #eee; text-align: center; }
-    .sorteo-bloque:last-child { border: none; }
+    .sorteo-bloque:last-child { border: none; padding-bottom: 0; margin-bottom: 0; }
     .n-sorteo-small { color: #003b8e; font-size: 11px; font-weight: bold; display: block; margin-bottom: 5px; opacity: 0.8; }
     .sorteo-bloque h3 { color: #555; font-size: 15px; text-transform: uppercase; margin: 0 0 15px 0; display: flex; align-items: center; justify-content: center; gap: 8px; }
     .bolas { display: flex; justify-content: center; gap: 12px; }
     .bola { width: 55px; height: 55px; border-radius: 50%; background: radial-gradient(circle at 30% 30%, #0056b3, #003b8e); color: white; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.2); border: 2px solid #00265d; }
     .no-disponible { font-size: 13px; color: #a0aec0; font-style: italic; background: #f8f9fa; padding: 10px; border-radius: 8px; display: block; margin-top: 10px; }
     
-    /* Footer Legal siempre visible */
+    /* --- ESTILO BANNER AUTOPROMO (Optimizado) --- */
+    .banner-promo {
+      max-width: 500px;
+      margin: 30px auto 10px; /* Separación arriba y abajo */
+      text-align: center;
+      padding: 0 15px;
+    }
+    .banner-promo a {
+      display: inline-block;
+      transition: transform 0.2s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      border-radius: 8px; /* Bordes suaves */
+      overflow: hidden;
+    }
+    .banner-promo a:hover {
+      transform: translateY(-3px); /* Efecto sutil de elevación */
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .banner-promo img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* Footer Legal */
     .footer-legal { padding: 30px 20px; text-align: center; font-size: 11px; color: #7f8c8d; max-width: 600px; margin: 0 auto; }
     .brand-footer { margin-top: 15px; font-weight: bold; color: #2c3e50; letter-spacing: 1px; }
 
-    /* MODO EMBED: Ahora mantiene casi todo, solo oculta el selector para una vista limpia */
+    /* MODO EMBED */
     body.is-embed .buscador-container { display: none; }
     body.is-embed .card { margin-top: 20px; box-shadow: none; border: 1px solid #eee; }
   </style>
@@ -61,12 +85,19 @@
 
   <main id="resultados"></main>
 
+  <section class="banner-promo">
+    <a href="https://www.epicentroradio.com/?utm_source=loto3_resultados&utm_medium=banner_interno&utm_campaign=cobertura_nacional" target="_blank">
+        <img src="https://primerosenlaquinta.cl/wp-content/uploads/2026/03/ChileybotanasconamarilloenfondorojoparaNegociodeSnacksLogo-ezgif.com-optimize.gif" alt="Escucha Epicentro Radio en todo Chile" width="300" height="250">
+    </a>
+  </section>
+
   <footer class="footer-legal">
     <p><strong>ADVERTENCIA:</strong> Los resultados oficiales pertenecen a Polla Chilena de Beneficencia S.A. Verifique siempre su boleto en agencias oficiales.</p>
     <div class="brand-footer">DESARROLLADO POR EPICENTRO LABS | Viña del Mar</div>
   </footer>
 
   <script>
+    /* ... (Tu script original se mantiene intacto abajo) ... */
     const SHEET_ID = "1dRIR53JdyxVz0d3nGsSEEfsIVs_E6rvVKt8kVmQ_E7c"; 
     const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
     const contenedor = document.getElementById("resultados");
@@ -89,21 +120,11 @@
     }
 
     function procesarNumeros(val) {
-  // 1. Validar si la celda está vacía (evita el mensaje de error falso)
-  if (val === undefined || val === null || val.toString().trim() === "") {
-    return [];
-  }
-  
-  // 2. Limpiar caracteres y convertir a texto
-  let str = val.toString().replace(/[\s\-\,]/g, "");
-  
-  // 3. Rellenar con ceros si faltan dígitos (arregla el 076)
-  if (str.length > 0 && str.length < 3) {
-    str = str.padStart(3, '0');
-  }
-  
-  return str.split("");
-}
+      if (val === undefined || val === null || val.toString().trim() === "") return [];
+      let str = val.toString().replace(/[\s\-\,]/g, "");
+      if (str.length > 0 && str.length < 3) str = str.padStart(3, '0');
+      return str.split("");
+    }
 
     fetch(URL).then(r => r.text()).then(text => {
       const match = text.match(/setResponse\(([\s\S]*?)\);?\s*$/);
